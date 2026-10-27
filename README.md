@@ -33,6 +33,19 @@ None combine a persistent lazy index with an interactive fuzzy UI. `s3tui` filte
 
 > ⚠️ Run the manual proxy first. Record the timing numbers in this section before Phase 0 of the build order.
 
+**Result (2026-10-26): measured checks PASS; overall Gate-0 PENDING.** Manual proxy run against `s3://stpubdata/roman/nexus/soc_simulations/r00342/l2/`:
+
+| Check | Observed | Verdict |
+|-------|----------|---------|
+| Full prefix listing | 83.83 s wall time (user 13.07 s, sys 2.43 s); 272,160 keys | PASS (< 10 min) for this prefix |
+| DuckDB load | 272,160 rows; mtime range `2026-04-30 22:05:22` to `2026-05-01 13:15:41` | PASS (row count matches listing); load time not reported |
+| Top 50 keys by mtime | 17 ms; 50 rows | PASS (< 500 ms) at this size |
+| Literal `_cal.asdf` suffix count | 61 ms; 68,040 matches | PASS (< 500 ms) at this size |
+| `ext='fits'` under `roman/` | 2 ms; 0 matches | PASS (< 500 ms) at this size |
+| Interactive reload | Interactive stage reached; keystroke latency not reported | PENDING (< 200 ms confirmation) |
+
+This is a subtree measurement, not evidence of a full largest-bucket listing. The 272,160-key dataset is below the required 1 M keys for query validation. Keep the overall gate pending until those scale checks and interactive responsiveness are confirmed; no measured check failed. Phase 0–1 code was written ahead of this result (see `implementation-notes.md`, DEVIATION 2026-10-26).
+
 ---
 
 ## Architecture

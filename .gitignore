@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+.omc/
+.claude/settings.local.json
+.claude/.DS_Store
+.claude/**/.DS_Store
+.claude/.headroom_wrap_marker.json
+.DS_Store

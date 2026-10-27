@@ -1,0 +1,64 @@
+[project]
+name = "s3fz"
+version = "0.1.0"
+description = "fzf-driven S3 explorer backed by a lazily built DuckDB index"
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "Emmanuel Joliet" }]
+requires-python = ">=3.11"
+dependencies = [
+  "duckdb>=1.4",
+  "obstore>=0.12",
+  "arro3-core>=0.5",
+  "pyarrow>=19",
+  "boto3>=1.35",
+  "pydantic-settings>=2.6",
+  "pytz>=2026.5",
+]
+
+[project.scripts]
+s3fz = "s3fz.cli:main"
+
+[dependency-groups]
+dev = [
+  "pytest>=8",
+  "pytest-timeout>=2.3",
+  "moto[s3,server]>=5.0",
+  "ruff>=0.8",
+  "mypy>=1.13",
+  "boto3-stubs[s3]>=1.35",
+]
+
+[build-system]
+requires = ["uv_build>=0.5"]
+build-backend = "uv_build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+timeout = 120
+markers = ["perf: slow performance checks, opt-in with -m perf"]
+addopts = "-m 'not perf'"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["src", "tests"]
+exclude = ["*.md"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "S", "N", "RUF", "PL", "T20"]
+ignore = ["PLR2004", "PLR0913", "S101", "PLC0415"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S", "PLR", "T20"]
+# index/ interpolates only code-owned SQL fragments; user input never reaches it (Invariant 5).
+"src/s3fz/index/*" = ["S608"]
+
+[tool.mypy]
+strict = true
+python_version = "3.11"
+files = ["src"]
+
+[[tool.mypy.overrides]]
+module = ["pyarrow", "pyarrow.*", "arro3.*"]
+ignore_missing_imports = true
